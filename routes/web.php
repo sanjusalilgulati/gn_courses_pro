@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CertificateController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\MessageController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+Route::post('getCertificate', [CertificateController::class, 'getCertificate'])->name('certificate');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -31,6 +34,8 @@ Route::middleware('auth')->group(function () {
 
 
     Route::resource('certificates', CertificateController::class)->middleware('admin');
+
+    Route::resource('contacts', ContactController::class)->middleware('admin');
     // Route::delete('messages/destroy/{id}', [MessageController::class, 'destroy'])->name('messageDestroy')->middleware('admin');
 
     // Route::get('messages/total-by-user', 'MessageController@totalMessageByUser');
@@ -44,6 +49,7 @@ Route::middleware('auth')->group(function () {
     // Route::post('/messages/send-message', [MessageController::class, 'sendMessage'])->name('send-message');
 
 });
+
 
 
 Route::post('/broadcasting/auth', function (){

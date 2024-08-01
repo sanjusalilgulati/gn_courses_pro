@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Rules\NoScriptTag;
+use Illuminate\Support\Facades\Validator;
 use App\Models\certificate;
 use Illuminate\Http\Request;
 
@@ -122,5 +124,29 @@ class CertificateController extends Controller
     public function destroy(certificate $certificate)
     {
         //
+    }
+
+    public function getCertificate(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+              'cert' => ['required', 'string', new NoScriptTag]
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'errors' => $validator->errors()
+            ], 422);
+        }
+        $certificate = "";
+        $data = certificate::select('file')->where('number', $request->cert)->first();
+        if($data)
+        {
+            $actual_link = (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]";
+            $certificate = $actual_link."/storage/".$data['file'];
+        }
+       return response()->json([
+        'message' => 'Certification data',
+        'file' => $certificate
+    ]);
     }
 }
